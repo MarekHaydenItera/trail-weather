@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SharpKml.Dom;
+using SharpKml.Engine;
+using System.Text;
 using trail_weather_data_access;
 using trail_weather_data_access.Models;
 
@@ -9,18 +12,52 @@ secretProvider.TryGet("ConnectionString", out var secretPass);
 
 if (secretPass is null)
     throw new ArgumentNullException("Connection string is empty", secretPass);
+string projectDirectory = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
+string kmlFilePath = Path.Combine(projectDirectory, "TRAIL HUNTER.kml");
+string kmlFileContents = "";
+try
+{
+    kmlFileContents = File.ReadAllText(kmlFilePath);    
+}
+catch (IOException e)
+{
+    Console.WriteLine($"An error occurred: {e.Message}");
+    return;
+}
+
+if (kmlFileContents is "")
+{
+    Console.WriteLine("Kml file has no content");
+    return;
+}
+KmlFile file;
+using (var stream = new MemoryStream(ASCIIEncoding.UTF8.GetBytes(kmlFileContents)))
+{
+    file = KmlFile.Load(stream);        
+}
 
 using (var db = new TrailWeatherDbContext(secretPass))
 {
-    var sportCenterType = new SportCenterType { Name = "Ski Resort" };
-    db.SportCenterType.Add(sportCenterType);
-    db.SaveChanges();
+    var allTypes = file.Root.Flatten().OfType<Folder>().ToList();
+    foreach (var type in allTypes)
+    {    
+        foreach (var sportCenterItem in type.Features)
+        {
+            SportCenterType sportCenterType;
+            SportCenterType? findCenterType = db.SportCenterType.Where(sct => sct.Name == type.Name).SingleOrDefault();
+            if (findCenterType is null)
+                sportCenterType = new SportCenterType { Name = type.Name };
+            else
+                sportCenterType = findCenterType;
+            
+            var geoData = new GeoData { 
+                Lat = ((Point)((Placemark)sportCenterItem).Geometry).Coordinate.Latitude,
+                Lon = ((Point)((Placemark)sportCenterItem).Geometry).Coordinate.Longitude };
+                        
+            var sportCenter = new SportCenter { Name = sportCenterItem.Name, GeoData = geoData, SportCenterType = sportCenterType };
 
-    var geoData = new GeoData { Lat = 45.123, Lon = -120.123 };
-    db.GeoData.Add(geoData);
-    db.SaveChanges();
-
-    var sportCenter = new SportCenter { Name = "Mt. Hood Meadows", GeoData = geoData, SportCenterType = sportCenterType };
-    db.SportCenter.Add(sportCenter);
-    db.SaveChanges();
+            db.SportCenter.Add(sportCenter);
+            db.SaveChanges();
+        }
+    }   
 }

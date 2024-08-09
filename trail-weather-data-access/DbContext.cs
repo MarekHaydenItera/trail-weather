@@ -43,7 +43,7 @@ namespace trail_weather_data_access
 
             modelBuilder.Entity<SportCenterType>()
                 .HasMany(s => s.SportCenter)
-                .WithOne(s => s.SportCenterType);
+                .WithOne(s => s.SportCenterType);                
 
             modelBuilder.Entity<GeoData>()
                 .HasOne(g => g.SportCenter)
