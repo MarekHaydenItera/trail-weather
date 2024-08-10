@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trail-weather-api", "trail-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trail-weather-data-access", "trail-weather-data-access\trail-weather-data-access.csproj", "{D79A3E64-056E-4EEF-89CC-C7DA9BB4ABC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "trail-weather-data-loader", "trail-weather-data-loader\trail-weather-data-loader.csproj", "{046ACEDF-78FE-4183-8D54-DCAE413CF183}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trail-weather-data-loader", "trail-weather-data-loader\trail-weather-data-loader.csproj", "{046ACEDF-78FE-4183-8D54-DCAE413CF183}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
