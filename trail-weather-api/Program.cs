@@ -1,18 +1,8 @@
-using Microsoft.Extensions.DependencyInjection;
 using trail_weather_api.Services;
 using trail_weather_api.Services.Interfaces;
 using trail_weather_data_access.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//builder.Services.AddHttpClient("HttpClient", client =>
-//{
-//    client.BaseAddress = new Uri("https://api.open-meteo.com/v1/");
-//    client.DefaultRequestHeaders.Add("Accept", "application/json");
-//});
-
-// Register HttpClient with a typed client (ExampleService)
-
 
 var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
@@ -28,13 +18,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IDistanceCalculator, DistanceCalculator>();
 builder.Services.AddTransient<ISportCenterRepository>(provider => new SportCenterRepository(secretPass));
 builder.Services.AddTransient<IForecastService, ForecastService>();
 
 builder.Services.AddHttpClient<IForecastService, ForecastService>(client =>
 {
-    client.BaseAddress = new Uri("https://api.open-meteo.com/v1/");
+    client.BaseAddress = new Uri("https://api.open-meteo.com/v1/forecast");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 

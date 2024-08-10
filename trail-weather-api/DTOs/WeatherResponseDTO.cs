@@ -23,7 +23,7 @@ namespace trail_weather_api.DTOs
         public string TimezoneAbbreviation { get; set; }
 
         [JsonProperty("elevation")]
-        public double Elevation { get; set; }      
+        public double Elevation { get; set; }
 
         [JsonProperty("daily_units")]
         public DailyUnits DailyUnits { get; set; }

@@ -17,7 +17,7 @@ string kmlFilePath = Path.Combine(projectDirectory, "TRAIL HUNTER.kml");
 string kmlFileContents = "";
 try
 {
-    kmlFileContents = File.ReadAllText(kmlFilePath);    
+    kmlFileContents = File.ReadAllText(kmlFilePath);
 }
 catch (IOException e)
 {
@@ -33,14 +33,14 @@ if (kmlFileContents is "")
 KmlFile file;
 using (var stream = new MemoryStream(ASCIIEncoding.UTF8.GetBytes(kmlFileContents)))
 {
-    file = KmlFile.Load(stream);        
+    file = KmlFile.Load(stream);
 }
 
 using (var db = new TrailWeatherDbContext(secretPass))
 {
     var allTypes = file.Root.Flatten().OfType<Folder>().ToList();
     foreach (var type in allTypes)
-    {    
+    {
         foreach (var sportCenterItem in type.Features)
         {
             SportCenterType sportCenterType;
@@ -49,15 +49,17 @@ using (var db = new TrailWeatherDbContext(secretPass))
                 sportCenterType = new SportCenterType { Name = type.Name };
             else
                 sportCenterType = findCenterType;
-            
-            var geoData = new GeoData { 
-                Lat = ((Point)((Placemark)sportCenterItem).Geometry).Coordinate.Latitude,
-                Lon = ((Point)((Placemark)sportCenterItem).Geometry).Coordinate.Longitude };
-                        
+
+            var geoData = new GeoData
+            {
+                Lat = Math.Round(((Point)((Placemark)sportCenterItem).Geometry).Coordinate.Latitude, 2),
+                Lon = Math.Round(((Point)((Placemark)sportCenterItem).Geometry).Coordinate.Longitude, 2)
+            };
+
             var sportCenter = new SportCenter { Name = sportCenterItem.Name, GeoData = geoData, SportCenterType = sportCenterType };
 
             db.SportCenter.Add(sportCenter);
             db.SaveChanges();
         }
-    }   
+    }
 }
