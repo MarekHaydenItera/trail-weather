@@ -9,8 +9,8 @@ namespace trail_weather_api.Services
     public class ForecastService : IForecastService
     {
         private readonly HttpClient _httpClient;
-        const int PAST_DAYS = 3;
-        const int FORECAST_DAYS = 3;        
+        const int PAST_DAYS = 2;
+        const int FORECAST_DAYS = 4;        
 
         public ForecastService(HttpClient httpClient)
         {

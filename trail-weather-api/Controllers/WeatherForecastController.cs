@@ -44,8 +44,8 @@ namespace trail_weather_api.Controllers
         }
 
         private static int CalculateDistance(GeoCoordinate start, GeoCoordinate end)
-        {
-            return (int)start.GetDistanceTo(end);
+        {            
+            return (int)start.GetDistanceTo(end)/1000;
         }
     }
 }
