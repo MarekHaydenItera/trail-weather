@@ -5,7 +5,7 @@
 namespace trail_weather_data_access.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -41,16 +41,18 @@ namespace trail_weather_data_access.Migrations
                 name: "SportCenter",
                 columns: table => new
                 {
-                    SportCenterId = table.Column<int>(type: "int", nullable: false),
+                    SportCenterId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GeoDataId = table.Column<int>(type: "int", nullable: false),
                     SportCenterTypeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SportCenter", x => x.SportCenterId);
                     table.ForeignKey(
-                        name: "FK_SportCenter_GeoData_SportCenterId",
-                        column: x => x.SportCenterId,
+                        name: "FK_SportCenter_GeoData_GeoDataId",
+                        column: x => x.GeoDataId,
                         principalTable: "GeoData",
                         principalColumn: "GeoDataId",
                         onDelete: ReferentialAction.Cascade);
@@ -61,6 +63,12 @@ namespace trail_weather_data_access.Migrations
                         principalColumn: "SportCenterTypeId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SportCenter_GeoDataId",
+                table: "SportCenter",
+                column: "GeoDataId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SportCenter_SportCenterTypeId",

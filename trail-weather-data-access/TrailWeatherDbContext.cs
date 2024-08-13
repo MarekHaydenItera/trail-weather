@@ -36,19 +36,19 @@ namespace trail_weather_data_access
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SportCenter>()
-                .HasOne(s => s.GeoData)
-                .WithOne(g => g.SportCenter)
-                .HasForeignKey<GeoData>(g => g.GeoDataId);
-
+            modelBuilder.Entity<SportCenter>(entity =>
+            {
+                entity.HasOne(s => s.GeoData).WithOne(s => s.SportCenter);
+                entity.HasOne(s => s.SportCenterType).WithMany(s => s.SportCenter);
+            });
+                
             modelBuilder.Entity<SportCenterType>()
                 .HasMany(s => s.SportCenter)
                 .WithOne(s => s.SportCenterType);
 
             modelBuilder.Entity<GeoData>()
                 .HasOne(g => g.SportCenter)
-                .WithOne(s => s.GeoData)
-                .HasForeignKey<SportCenter>(s => s.SportCenterId);
+                .WithOne(g => g.GeoData);
         }
     }
 }

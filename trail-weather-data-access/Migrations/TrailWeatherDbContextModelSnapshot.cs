@@ -43,17 +43,25 @@ namespace trail_weather_data_access.Migrations
             modelBuilder.Entity("trail_weather_data_access.Models.SportCenter", b =>
                 {
                     b.Property<int>("SportCenterId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SportCenterId"));
+
+                    b.Property<int>("GeoDataId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SportCenterTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("SportCenterId");
+
+                    b.HasIndex("GeoDataId")
+                        .IsUnique();
 
                     b.HasIndex("SportCenterTypeId");
 
@@ -81,7 +89,7 @@ namespace trail_weather_data_access.Migrations
                 {
                     b.HasOne("trail_weather_data_access.Models.GeoData", "GeoData")
                         .WithOne("SportCenter")
-                        .HasForeignKey("trail_weather_data_access.Models.SportCenter", "SportCenterId")
+                        .HasForeignKey("trail_weather_data_access.Models.SportCenter", "GeoDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
