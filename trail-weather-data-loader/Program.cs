@@ -38,6 +38,7 @@ using (var stream = new MemoryStream(ASCIIEncoding.UTF8.GetBytes(kmlFileContents
 
 using (var db = new TrailWeatherDbContext(secretPass))
 {
+    db.Database.EnsureCreated();
     var allTypes = file.Root.Flatten().OfType<Folder>().ToList();
     foreach (var type in allTypes)
     {

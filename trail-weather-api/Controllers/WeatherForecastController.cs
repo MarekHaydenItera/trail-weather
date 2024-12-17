@@ -40,6 +40,9 @@ namespace trail_weather_api.Controllers
                     DailyData = new DailyDataDTO()
                 }).ToList();
 
+            if (filteredByDistance.Count == 0)
+                return new List<ForecastDTO>();
+
             return await _forecastService.GetForecast(filteredByDistance);
         }
 

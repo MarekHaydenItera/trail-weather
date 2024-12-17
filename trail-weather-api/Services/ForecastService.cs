@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Web;
 using trail_weather_api.DTOs;
@@ -34,8 +35,27 @@ namespace trail_weather_api.Services
                 throw new Exception("Error while fetching data from the API");
 
             var parsedResponse = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var weatherData = JsonConvert.DeserializeObject<List<WeatherResponseDTO>>(parsedResponse);
 
+            List<WeatherResponseDTO> weatherData = new();
+
+            if (forecastDTOs.Count == 1)
+            {
+                WeatherResponseDTO? singleResponse = JsonConvert.DeserializeObject<WeatherResponseDTO>(parsedResponse);
+                if (singleResponse is null)                
+                    throw new NullReferenceException();
+                
+                weatherData.Add(singleResponse);
+            }                          
+            
+            if (forecastDTOs.Count > 1)
+            {
+                List<WeatherResponseDTO>? multipleResponse = JsonConvert.DeserializeObject<List<WeatherResponseDTO>>(parsedResponse);
+                if (multipleResponse is null)
+                    throw new NullReferenceException();
+
+                weatherData.AddRange(multipleResponse);
+            }
+                
             if (weatherData is null)
                 throw new Exception("Error while fetching data from the API no data received");
 
